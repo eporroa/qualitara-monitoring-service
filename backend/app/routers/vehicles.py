@@ -32,7 +32,9 @@ def _latest_anomaly(db: Session, vehicle_id: str) -> AnomalyOut | None:
 
 @router.get("", response_model=list[VehicleOut])
 def list_vehicles(db: Session = Depends(get_db)):
-    vehicles = db.query(Vehicle).order_by(Vehicle.vehicle_id).all()
+    vehicles = db.query(Vehicle).order_by(
+        text("CAST(SUBSTR(vehicle_id, 3) AS INTEGER)")
+    ).all()
     return [
         VehicleOut(
             vehicle_id=v.vehicle_id,

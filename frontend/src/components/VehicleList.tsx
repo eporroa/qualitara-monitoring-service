@@ -24,6 +24,10 @@ export function VehicleList() {
   if (error) return <p className="error">{error}</p>
   if (!vehicles) return <p>Loading vehicles…</p>
 
+  const sorted = [...vehicles].sort(
+    (a, b) => parseInt(a.vehicle_id.slice(2)) - parseInt(b.vehicle_id.slice(2))
+  )
+
   return (
     <table className="vehicle-table">
       <thead>
@@ -35,7 +39,7 @@ export function VehicleList() {
         </tr>
       </thead>
       <tbody>
-        {vehicles.map((v) => (
+        {sorted.map((v) => (
           <tr key={v.vehicle_id} className={v.current_status === 'fault' ? 'row-fault' : ''}>
             <td><strong>{v.vehicle_id}</strong></td>
             <td>
