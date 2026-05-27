@@ -39,19 +39,7 @@ def _detect_anomalies(payload: TelemetryIn) -> list[dict]:
 def ingest_telemetry(payload: TelemetryIn, db: Session = Depends(get_db)):
     now = datetime.now(timezone.utc)
 
-    record = Telemetry(
-        vehicle_id=payload.vehicle_id,
-        timestamp=payload.timestamp,
-        lat=payload.lat,
-        lon=payload.lon,
-        battery_pct=payload.battery_pct,
-        speed_mps=payload.speed_mps,
-        status=payload.status,
-        error_codes=json.dumps(payload.error_codes),
-        zone_entered=payload.zone_entered,
-    )
-    db.add(record)
-
+    # Upsert vehicle before Telemetry so the FK is satisfied on flush
     vehicle = db.get(Vehicle, payload.vehicle_id)
     if vehicle:
         vehicle.current_status = payload.status
@@ -64,6 +52,19 @@ def ingest_telemetry(payload: TelemetryIn, db: Session = Depends(get_db)):
             current_battery_pct=payload.battery_pct,
             updated_at=now,
         ))
+
+    record = Telemetry(
+        vehicle_id=payload.vehicle_id,
+        timestamp=payload.timestamp,
+        lat=payload.lat,
+        lon=payload.lon,
+        battery_pct=payload.battery_pct,
+        speed_mps=payload.speed_mps,
+        status=payload.status,
+        error_codes=json.dumps(payload.error_codes),
+        zone_entered=payload.zone_entered,
+    )
+    db.add(record)
 
     anomaly_types = []
     for a in _detect_anomalies(payload):
