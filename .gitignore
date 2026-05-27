@@ -14,6 +14,8 @@ env/
 .env
 *.db
 *.sqlite3
+fleet.db-shm
+fleet.db-wal
 
 # Node
 node_modules/
