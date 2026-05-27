@@ -89,3 +89,4 @@ Anomalies are detected inline on every `POST /telemetry`:
 ## Docs
 
 - [Architecture Decision Record](docs/adr.md) — key decisions, assumptions, scale-out plan, deliberate omissions
+- [AI Interaction Log](docs/ai-interaction-log.md) - logs of the conversations done with Claude Code
